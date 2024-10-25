@@ -36,14 +36,16 @@ void loop() {
         reset();
         return;
     }
+    // Print message type in list
+    print_message_type(message_type);
     switch(message_type) {
         case KWP_DISCONNECT:
-            Serial.println("-> DISCONNECT");
+            //Serial.println("-> DISCONNECT");
             reset();
             return;
         break;
         case KWP_ACKNOWLEDGE:
-            Serial.println("-> ACKNOWLEDGE");
+            //Serial.println("-> ACKNOWLEDGE");
             if (!KWP_send_ack()) {
                 Serial.println("send ack block error");
                 reset();
@@ -52,8 +54,8 @@ void loop() {
         break;
         case KWP_REQUEST_GROUP_READING:
             uint8_t group_selected = buff[3];
-            Serial.print("-> GROUP_READING Group: ");
-            Serial.println(group_selected);
+            //Serial.print("-> GROUP_READING Group: ");
+            //Serial.println(group_selected);
             if (!KWP_send_group_reading(group_selected)) { 
                 Serial.println("send group reading error");
                 reset();

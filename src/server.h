@@ -59,8 +59,8 @@ int16_t OBD_read()
     }
   }
   int16_t data = Serial1.read();
-  Serial.print("--> ");
-  Serial.println(data, HEX);
+ // Serial.print("--> ");
+  //Serial.println(data, HEX);
   return data;
 }
 
@@ -85,13 +85,13 @@ void OBD_write(uint8_t data)
  */
 bool KWP_send_block(uint8_t *s, int size)
 {
-    Serial.print("Sending ");
-    for (uint8_t i = 0; i < size; i++)
-    {
-        Serial.print(s[i], HEX);
-        Serial.print(" ");
-    }
-    Serial.println();
+    //Serial.print("Sending ");
+    //for (uint8_t i = 0; i < size; i++)
+    //{
+    //    Serial.print(s[i], HEX);
+    //    Serial.print(" ");
+    //}
+    //Serial.println();
 
   for (uint8_t i = 0; i < size; i++)
   {
@@ -366,8 +366,8 @@ bool KWP_receive_block(uint8_t buff[], uint8_t &received_count, uint8_t &message
                     if (data < 3 || data > 12) {
                         Serial.print("WARNING: very long message ahead");
                     }
-                    Serial.print("message length: ");
-                    Serial.println(data, HEX);
+                    //Serial.print("message length: ");
+                    //Serial.println(data, HEX);
                 break;
                 case 2:
                     if (data != block_counter) {
@@ -376,8 +376,8 @@ bool KWP_receive_block(uint8_t buff[], uint8_t &received_count, uint8_t &message
                 break;
                 case 3:
                     message_type = data;
-                    Serial.print("message type: ");
-                    Serial.println(data, HEX);
+                    //Serial.print("message type: ");
+                    //Serial.println(data, HEX);
                 break;
                 default:
                     if (data == 0x03) {
@@ -418,6 +418,7 @@ void reset() {
     awake = false;
     block_counter = 0;
     initial_condition = HIGH;
+    
     Serial.println("Waiting 3 sec");
     delay(3000);
     for (uint8_t i = 4; i < 20; i++) {
@@ -500,6 +501,7 @@ bool connect() {
     g.print("connected", RIGHT, rows[7]);
     g.setColor(font_color);
     draw_line_on_row(8);
+    draw_line_on_row(12);
     g.setColor(TFT_GREEN);
     Serial.println("------------------------------------------");
     Serial.println("|               connected                |");
