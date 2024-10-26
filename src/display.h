@@ -189,3 +189,10 @@ void reset_display() {
     _col_print_received_last = _col_print_received;
     _row_print_received_last = _row_print_received;
 }
+
+void error_timeout() {
+    g.setColor(TFT_RED);
+    g.print("!!! Timeout 500 ms !!!", CENTER, rows[13]);
+    delay(333);
+    g.setColor(font_color);
+}

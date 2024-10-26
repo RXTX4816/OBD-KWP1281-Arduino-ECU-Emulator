@@ -7,6 +7,8 @@
 #define ADDR 0x17
 #define BAUDRATE 10400
 
+#define TIMEOUT 500 // 1300
+
 ///VARIABLES/TYPES
 static const uint8_t KWP_ACKNOWLEDGE             = 0x09; // the module has no more data to send
 static const uint8_t KWP_REFUSE                  = 0x0A; // the module can not fulfill a request
@@ -49,18 +51,20 @@ uint8_t block_counter = 0;
  */
 int16_t OBD_read()
 {
-  unsigned long timeout = millis() + 1300;
+  unsigned long timeout = millis() + TIMEOUT;
   while (!Serial1.available())
   {
     if (millis() >= timeout)
     {
-      Serial.println("ERROR: OBD_read() timeout 1300 ms");
+      Serial.println("ERROR: OBD_read() timeout 500 ms");
       return -1;
     }
   }
   int16_t data = Serial1.read();
  // Serial.print("--> ");
   //Serial.println(data, HEX);
+  // ECHO
+  Serial1.write(data);
   return data;
 }
 
@@ -231,7 +235,7 @@ bool KWP_send_devicedata() {
 }
 
 bool KWP_receive_ack() {
-  unsigned long timeout = millis() + 1300;
+  unsigned long timeout = millis() + TIMEOUT;
   int16_t data = 0;
   uint8_t s[32];
   int recvcount = 0;
@@ -249,7 +253,7 @@ bool KWP_receive_ack() {
         recvcount++;
 
         if (recvcount >= 4) {
-            timeout = millis() + 1300;
+            timeout = millis() + TIMEOUT;
             break;
         }
         
@@ -267,7 +271,7 @@ bool KWP_receive_ack() {
             OBD_write(data ^ 0xFF); // send complement ack
         
 
-        timeout = millis() + 1300;
+        timeout = millis() + TIMEOUT;
 
         // debugstrnum(F(" - KWP_receive_block: Added timeout. ReceiveCount: "), (uint8_t)recvcount);
         // debug(F(". Processed data: "));
@@ -306,8 +310,14 @@ bool wait_5baud() {
     }
     Serial.println("waiting 10400 baud 0x17 addr PIN_RX_19 ...");
     g.print("Waiting 5baud..", LEFT, rows[4]);
+    bool ready = false;
+    while (!ready) {
+        if (digitalRead(PIN_RX) == LOW) {
+            ready = true;
+        }
+    }
     while (digitalRead(PIN_RX) == HIGH) { 
-        delay(1);
+        delay(100);
     }
     Serial.println("initial_condition changed");
     g.setColor(TFT_GREEN);
@@ -335,6 +345,7 @@ bool wait_5baud() {
                 || ((i == 4 || i == 6 || i == 7) && bits[i] == HIGH)) {
             Serial.println("wrong 5baud address");
             initial_condition = HIGH;
+            g.print("   ", RIGHT, rows[4]);
             return false;
         }
     }
@@ -345,7 +356,7 @@ bool wait_5baud() {
 
 bool KWP_receive_block(uint8_t buff[], uint8_t &received_count, uint8_t &message_type) {
     uint8_t recvcount = 0;
-    unsigned long timeout = millis() + 1300;
+    unsigned long timeout = millis() + TIMEOUT;
 
     bool received_message_end = false;
     while (!received_message_end) {
@@ -396,7 +407,7 @@ bool KWP_receive_block(uint8_t buff[], uint8_t &received_count, uint8_t &message
             }
             
             OBD_write(data ^ 0xFF); // send complement ack
-            timeout = millis() + 1300;
+            timeout = millis() + TIMEOUT;
 
         }
         
@@ -404,6 +415,7 @@ bool KWP_receive_block(uint8_t buff[], uint8_t &received_count, uint8_t &message
         {
             Serial.print("Timeout - recvcount = ");
             Serial.println(recvcount);
+            error_timeout();
             return false;
         }
     }
@@ -506,7 +518,7 @@ bool connect() {
     Serial.println("------------------------------------------");
     Serial.println("|               connected                |");
     Serial.println("|----------------------------------------|");
-    Serial.println("|keep alive by sending ack within 1300 ms|");
+    Serial.println("|keep alive by sending ack within 500 ms |");
     Serial.println("|----------------------------------------|");
     return true; 
 }
