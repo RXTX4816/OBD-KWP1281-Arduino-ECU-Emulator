@@ -155,6 +155,8 @@ uint8_t kmh_a = 100;
 uint8_t kmh_b = 4;
 uint8_t fuel_a = 100;
 uint8_t fuel_b = 40;
+uint8_t odo_a = 160;
+uint8_t odo_b = 3;
 long iteration = 0;
 bool KWP_send_group_reading(uint8_t group) {
     uint8_t buf[16] = {0x0F, block_counter, KWP_RECEIVE_GROUP_READING, 0x07, kmh_a, kmh_b, 0x01, rpm_a, rpm_b, 0x25, 0x00, 0x01, 0x2C, 0x0A, 0x11, 0x03};
@@ -165,8 +167,8 @@ bool KWP_send_group_reading(uint8_t group) {
             return (KWP_send_block(buf, 16));
         case 2: // 0x24 0x13 0x0C 0x05 // oil temp
             buf[3] = 0x24;
-            buf[4] = 0xA0;
-            buf[5] = 0x03;
+            buf[4] = odo_a;
+            buf[5] = odo_b;
 
             buf[6] = 0x13;
             buf[7] = fuel_a;
@@ -180,8 +182,14 @@ bool KWP_send_group_reading(uint8_t group) {
             buf[13] = 0x0A;
             buf[14] = 0x81;
             iteration++;
-            if (iteration % 10 == 0 && fuel_b > 1) {
+            if (iteration % 6 == 0 && fuel_b > 1) {
                 fuel_b--;
+            }
+            if (iteration % 5 == 0) {
+                if (odo_b == 0xFF) {
+                    odo_a++;
+                }
+                odo_b++;
             }
             return (KWP_send_block(buf, 16));
         case 3: // 0x05 0x17 0x05 // coolant temp // oil temp
@@ -316,7 +324,12 @@ bool wait_5baud() {
             ready = true;
         }
     }
+    const int timeout_temp_bug = 3000;
+    unsigned long timeout_temp_bug_start = millis();
     while (digitalRead(PIN_RX) == HIGH) { 
+        if (millis() - timeout_temp_bug_start > timeout_temp_bug) {
+            return false;
+        }
         delay(100);
     }
     Serial.println("initial_condition changed");
