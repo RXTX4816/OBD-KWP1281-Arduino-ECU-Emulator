@@ -4,7 +4,7 @@
 
 
 void setup() {
-    Serial.begin(9600); // USB Debug if you dont want to use a TFT display shield
+    Serial.begin(115200); // USB Debug if you dont want to use a TFT display shield
     init_display();
     return;
 }

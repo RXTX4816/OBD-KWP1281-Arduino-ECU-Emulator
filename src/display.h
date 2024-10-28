@@ -21,7 +21,7 @@ word font_color = TFT_CYAN;
 #define _COL_PRINT_RECEIVED_DEFAULT 0
 uint8_t _row_print_received = 9; // 9 and 10
 uint8_t _col_print_received = 0; // 0 - 30
-word color_hide = TFT_MAGENTA;
+word color_hide = TFT_YELLOW;
 word color_focus = TFT_CYAN;
 uint8_t _row_print_received_last = _row_print_received;
 uint8_t _col_print_received_last = _col_print_received;
@@ -49,7 +49,7 @@ void increment_col_print() {
 
 void print_message_type(uint8_t message_type) {
     char received_message_type[2];
-    sprintf(received_message_type, "%x", message_type);
+    sprintf(received_message_type, "%02X", message_type);
     _current_message_type = received_message_type;
     // Recolor old value
     if (!_last_message_type.equals("00")) {
@@ -141,7 +141,7 @@ void startup_animation()
     //     delay(10);
     // }
     g.print("Welcome to", CENTER, rows[3]);
-    g.print("OBDisplay", CENTER, rows[5]);
+    g.print("OBDServer", CENTER, rows[5]);
     g.setFont(SmallFont);
     g.print("Version Alpha", CENTER, rows[6]);
     g.setFont(BigFont);

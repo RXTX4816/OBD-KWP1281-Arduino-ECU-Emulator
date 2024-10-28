@@ -22,4 +22,3 @@ Features:
 - acknowledge and group reading (only group 1, 2 and 3 implemented)
 - automatic reconnect
 - LCD display shows connection status
-

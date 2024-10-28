@@ -464,20 +464,20 @@ bool wakeup() {
     awake = true;
     initial_condition = HIGH;
     Serial.println("5baud success");
-    Serial.println("Waiting 300 ms");
-    delay(300);
+    //Serial.println("Waiting 75 ms");
+    //delay(75);
     return true;
 }
 
 bool connect() {
 
-    g.print("Sending syncbytes..", LEFT, rows[6]);
     Serial1.begin(BAUDRATE);
     if (!KWP_send_syncbytes()) {
         Serial.println("syncbytes error");
         reset();
         return false;
     }
+    g.print("Sending syncbytes..", LEFT, rows[6]);
     Serial.println("syncbytes success");
 
     for (uint8_t i = 0; i < 4; i++) {
