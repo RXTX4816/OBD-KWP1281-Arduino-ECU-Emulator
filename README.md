@@ -2,7 +2,7 @@
 
 This code is for the Arduino Mega with a 480x320 Non-Touch Color Display Shield (Optional)
 
-![](assets/DEMO.gif)
+![](assets/mainscreen.png)
 
 Used to test [OBDisplay](https://github.com/RXTX4816/OBD-KKL-KW1281-ARDUINO-TRIPCOMPUTER) when not having a real ECU around.
 
